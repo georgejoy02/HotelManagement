@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
+  <display-name>HotelManagement</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>UserController</display-name>
+    <servlet-name>UserController</servlet-name>
+    <servlet-class>com.hm.controller.UserController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserController</servlet-name>
+    <url-pattern>/UserController</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>GenerateInvoiceController</display-name>
+    <servlet-name>GenerateInvoiceController</servlet-name>
+    <servlet-class>com.hm.controller.GenerateInvoiceController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GenerateInvoiceController</servlet-name>
+    <url-pattern>/GenerateInvoiceController</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>InvoiceController</display-name>
+    <servlet-name>InvoiceController</servlet-name>
+    <servlet-class>com.hm.controller.InvoiceController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>InvoiceController</servlet-name>
+    <url-pattern>/InvoiceController</url-pattern>
+  </servlet-mapping>
+</web-app>
