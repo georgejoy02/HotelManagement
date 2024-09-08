@@ -61,6 +61,7 @@ public class InvoiceService {
 		}
 
 		invoice.setTransactionId(transactionId);
+		String invoicePath=null;
 
 		Path filePath = null;
 		PDPageContentStream contentStream;
@@ -200,9 +201,9 @@ public class InvoiceService {
 			e.printStackTrace();
 		}
 		if (filePath != null) {
-			return filePath.toString();
+			 invoicePath= bd.saveInvoiceMetadata(customerId,reservationId,filePath.toString());
 		}
 
-		return null;
+		return invoicePath;
 	}
 }

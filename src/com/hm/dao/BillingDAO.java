@@ -11,6 +11,71 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BillingDAO {
+
+	protected String fetchInvoice(String customerId, int reservationId) {
+		DbUtility db = new DbUtility();
+		PreparedStatement ps = null;
+		Connection con = db.connectDatabase();
+		String filePath = null;
+
+		String sql = "SELECT invoicePath FROM Invoices WHERE CustomerId = ? AND reservationId = ?";
+
+		try {
+			ps = con.prepareStatement(sql);
+
+			ps.setString(1, customerId);
+			ps.setInt(2, reservationId);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					filePath = rs.getString("invoicePath");
+				} else {
+					System.out.println("Invoice metadata not found.");
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.closeStatement(ps);
+			db.closeConnection(con);
+
+		}
+		return filePath;
+	}
+
+	public String saveInvoiceMetadata(String customerId, int reservationId, String filePath) {
+		String invoicePath = null;
+		DbUtility db = new DbUtility();
+		PreparedStatement ps = null;
+		Connection con = db.connectDatabase();
+		int rowsAffected = 0;
+
+		String sql = "INSERT INTO Invoices (customerId, reservationId, invoicePath) VALUES (?, ?, ?)";
+
+		try {
+			ps = con.prepareStatement(sql);
+
+			ps.setString(1, customerId);
+			ps.setInt(2, reservationId);
+			ps.setString(3, filePath);
+
+			rowsAffected = ps.executeUpdate();
+			if(rowsAffected>0) {
+				invoicePath=filePath;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.closeStatement(ps);
+			db.closeConnection(con);
+
+		}
+		return invoicePath;
+
+	}
+
 	public boolean updatePaymentStatus(int reservationId, int roomId) {
 		String updateRoomSql = "UPDATE Room SET status = 'Available' WHERE roomId = ?";
 		String updateReservationSql = "UPDATE Reservation SET status = 'completed' WHERE reservationId = ?";
@@ -141,64 +206,4 @@ public class BillingDAO {
 		return invoices;
 	}
 
-	public static int saveInvoiceMetadata(String CustomerId, String reservationId, String filePath) {
-		DbUtility db = new DbUtility();
-		PreparedStatement ps = null;
-		Connection con = db.connectDatabase();
-		int rowsAffected = 0;
-		String sql = "INSERT INTO Invoices (CustomerId, reservationId, invoicePath) VALUES (?, ?, ?)";
-
-		try {
-
-			ps = con.prepareStatement(sql);
-
-			ps.setString(1, CustomerId);
-			ps.setString(2, reservationId);
-			ps.setString(3, filePath);
-			rowsAffected = ps.executeUpdate();
-			con.commit();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		finally {
-			db.closeStatement(ps);
-			db.closeConnection(con);
-
-		}
-		return rowsAffected;
-	}
-
-	protected String fetchInvoice(String customerId, int reservationId) {
-		DbUtility db = new DbUtility();
-		PreparedStatement ps = null;
-		Connection con = db.connectDatabase();
-		String filePath =null;
-
-		String sql = "SELECT invoicePath FROM Invoices WHERE CustomerId = ? AND reservationId = ?";
-
-		try {
-			ps = con.prepareStatement(sql);
-
-			ps.setString(1, customerId);
-			ps.setInt(2, reservationId);
-
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					filePath = rs.getString("invoicePath");
-				} else {
-					System.out.println("Invoice metadata not found.");
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			db.closeStatement(ps);
-			db.closeConnection(con);
-
-		}
-		return filePath;
-	}
 }
