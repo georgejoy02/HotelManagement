@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BillingDAO {
 
-	protected String fetchInvoice(String customerId, int reservationId) {
+	public String fetchInvoice(String customerId, int reservationId) {
 		DbUtility db = new DbUtility();
 		PreparedStatement ps = null;
 		Connection con = db.connectDatabase();
@@ -43,6 +43,7 @@ public class BillingDAO {
 		}
 		return filePath;
 	}
+	
 
 	public String saveInvoiceMetadata(String customerId, int reservationId, String filePath) {
 		String invoicePath = null;

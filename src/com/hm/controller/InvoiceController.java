@@ -48,7 +48,7 @@ public class InvoiceController extends HttpServlet {
 			String expiryDate = request.getParameter("expiryDate");
 			String cvv = request.getParameter("cvv");
 			Utility utility = new Utility();
-			
+
 			boolean isValid = utility.carddetailsVerify(paymentMode, cardNumber, cardHolderName, expiryDate, cvv);
 			if (!isValid) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "card details not correct!!.");
@@ -58,7 +58,7 @@ public class InvoiceController extends HttpServlet {
 			try {
 				String filePath = invoiceServ.generateInvoice(reservationId, customerId);
 				if (filePath != null) {
-					
+
 					Path file = Path.of(filePath);
 					if (Files.exists(file)) {
 						response.setContentType("application/pdf");
@@ -71,7 +71,7 @@ public class InvoiceController extends HttpServlet {
 					} else {
 						System.out.println("file not found");
 					}
-				}else {
+				} else {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invoice not found.");
 				}
 
@@ -82,6 +82,37 @@ public class InvoiceController extends HttpServlet {
 			}
 
 			break;
+		case "fetchInvoice":
+			customerId = request.getParameter("customerId");
+			reservationId = Integer.parseInt(request.getParameter("reservationId"));
+			try {
+				String filePath = invoiceServ.fetchInvoiceService( customerId,reservationId);
+				if (filePath != null) {
+
+					Path file = Path.of(filePath);
+					if (Files.exists(file)) {
+						response.setContentType("application/pdf");
+						response.setHeader("Content-Disposition", "inline; filename=" + file.getFileName());
+
+						try (OutputStream out = response.getOutputStream()) {
+							Files.copy(file, out);
+							out.flush();
+						}
+					} else {
+						System.out.println("file not found");
+					}
+				} else {
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invoice not found.");
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invoice not found.");
+
+			}
+
+			break;
+
 		default:
 		}
 

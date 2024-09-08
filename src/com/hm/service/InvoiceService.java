@@ -22,6 +22,15 @@ public class InvoiceService {
 	public InvoiceService(ServletContext servletContext) {
 		this.servletContext = servletContext;
 	}
+	
+	public String fetchInvoiceService(String customerId,int reservationId) {
+		String invoicePath=null;
+		BillingDAO bd = new BillingDAO();
+		invoicePath=bd.fetchInvoice(customerId, reservationId);
+		return invoicePath;
+		
+		
+	}
 
 	public String generateInvoice(int reservationId, String customerId) {
 		Utility crDir = new Utility();
