@@ -1,29 +1,38 @@
 package com.hm.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Invoice {
 	public enum Status {
 		PAID, UNPAID
 	}
 
-	private String reservationId;
+	private int reservationId;
 	private String customerId;
 	private int roomId;
-
 	private String customerName;
+
 	private double roomCharges;
 	private double additionalCharges;
 	private double totalAmount;
+	private String mobile;
+	private String email;
+	private String address;
+
+	private Date checkInDate;
+	private Date checkOutDate;
 	private Timestamp invoiceDate;
+	private String roomType;
+	private String transactionId;
 	private Status status;
 
-	public String getReservationId() {
+	public int getReservationId() {
 		return reservationId;
 	}
 
-	public void setReservationId(String reservationId) {
-		this.reservationId = reservationId;
+	public int setReservationId(int reservationId) {
+		return this.reservationId = reservationId;
 	}
 
 	public String getCustomerName() {
@@ -61,7 +70,7 @@ public class Invoice {
 	}
 
 	public double calcTotalAmount(double roomCharges) {
-		totalAmount = calcAdditionalCharges( roomCharges) + roomCharges;
+		totalAmount = calcAdditionalCharges(roomCharges) + roomCharges;
 		return totalAmount;
 	}
 
@@ -99,6 +108,62 @@ public class Invoice {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public Date getCheckInDate() {
+		return checkInDate;
+	}
+
+	public void setCheckInDate(Date checkInDate) {
+		this.checkInDate = checkInDate;
+	}
+
+	public Date getCheckOutDate() {
+		return checkOutDate;
+	}
+
+	public void setCheckOutDate(Date checkOutDate) {
+		this.checkOutDate = checkOutDate;
+	}
+
+	public String getRoomType() {
+		return roomType;
+	}
+
+	public void setRoomType(String roomType) {
+		this.roomType = roomType;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
 
 }

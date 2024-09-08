@@ -16,7 +16,7 @@ public class BillingService {
 
 	// Method to retrieve the bill based on customer ID
 	public List<Invoice> getBillsByCustomerId(String customerId) {
-		List<Invoice> nonPaidList = billingDAO.fetchInvoiceByCustomerId(customerId);
+		List<Invoice> nonPaidList = billingDAO.fetchBillsByCustomerId(customerId);
 		for (Iterator<Invoice> iterator = nonPaidList.iterator(); iterator.hasNext();) {
 			Invoice invoice = (Invoice) iterator.next();
 			

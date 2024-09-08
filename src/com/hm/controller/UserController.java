@@ -41,6 +41,7 @@ public class UserController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String action = request.getParameter("action");
+
 		switch (action) {
 		case "logoutUser":
 			HttpSession session = request.getSession(false);
@@ -52,6 +53,7 @@ public class UserController extends HttpServlet {
 			response.setDateHeader("Expires", 0); // Proxies
 			response.sendRedirect("index.jsp");
 			break;
+
 		default:
 		}
 	}
@@ -108,9 +110,10 @@ public class UserController extends HttpServlet {
 			break;
 
 		case "reservationUser":
+			Utility convDate=new Utility();
 
-			Date checkInDate = Utility.convertStringToSQLDate(request.getParameter("checkinDate"));
-			Date checkOutDate = Utility.convertStringToSQLDate(request.getParameter("checkoutDate"));
+			Date checkInDate = convDate.convertStringToSQLDate(request.getParameter("checkinDate"));
+			Date checkOutDate = convDate.convertStringToSQLDate(request.getParameter("checkoutDate"));
 			String roomType = request.getParameter("roomPreferences");
 			customerId = request.getParameter("customerId");
 			String name = request.getParameter("name");
@@ -132,6 +135,19 @@ public class UserController extends HttpServlet {
 
 			rd = request.getRequestDispatcher("user/reservation.jsp");
 			rd.forward(request, response);
+			break;
+		case "paymentUser":
+			String totalAmount = request.getParameter("totalAmount");
+			String reservationId = request.getParameter("reservationId");
+			customerId = request.getParameter("customerId");
+
+			request.setAttribute("totalAmount", totalAmount);
+			request.setAttribute("reservationId", reservationId);
+			request.setAttribute("customerId", customerId);
+
+			// Forward to a JSP page to display updated details
+			RequestDispatcher dispatcher = request.getRequestDispatcher("user/payment.jsp");
+			dispatcher.forward(request, response);
 			break;
 		default:
 			System.out.println("defaulttest");

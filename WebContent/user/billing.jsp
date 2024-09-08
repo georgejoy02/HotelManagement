@@ -99,7 +99,7 @@ button:hover {
 				if (invoices != null) {
 					int index = 1;
 					for (Invoice invoice : invoices) {
-						String reservationId = invoice.getReservationId();
+						int reservationId = invoice.getReservationId();
 						double roomCharges = invoice.getRoomCharges();
 						double additionalCharges = invoice.getAdditionalCharges();
 						double totalAmount = invoice.getTotalAmount();
@@ -116,7 +116,9 @@ button:hover {
 							action="<%=request.getContextPath()%>/UserController?action=paymentUser"
 							method="post">
 							<input type="hidden" name="totalAmount" value="<%=totalAmount%>"
-								readonly>
+								readonly> <input type="hidden" name="reservationId"
+								value="<%=reservationId%>" readonly> <input
+								type="hidden" name="customerId" value="<%=customerId%>" readonly>
 							<button type="submit">Pay</button>
 						</form>
 					</td>

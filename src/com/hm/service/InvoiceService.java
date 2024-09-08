@@ -1,11 +1,15 @@
 package com.hm.service;
 
+import com.hm.dao.BillingDAO;
+import com.hm.model.Invoice;
+import com.hm.util.Utility;
+import jakarta.servlet.ServletContext;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -13,25 +17,51 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 public class InvoiceService {
+	private ServletContext servletContext;
 
-	public String generateInvoice(String reservationId, String customerId) {
-		String outputDirectory = "";
+	public InvoiceService(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
 
+	public String generateInvoice(int reservationId, String customerId) {
+		Utility crDir = new Utility();
+		String outputDirectory = crDir.createOutputDirectory(servletContext.getRealPath("/invoices"));
+		BillingDAO bd = new BillingDAO();
+		Invoice invoice = bd.fetchBillDetails(reservationId, customerId);// is null
+		if (invoice == null) {
+			System.out.println("InvoiceService: invoice null");
+			return null;
+		}
 		String hotelName = "Hotel Taj";
-		String customerName = "John Doe";
-		String mobile = "9876543210";
-		String email = "john.doe@example.com";
-		String address = "123, Main Street, City";
-		int bookingId = 45678;
-		Date checkInDate = new Date();
-		Date checkOutDate = new Date();
-		String roomType = "Deluxe";
-		int roomId = 101;
-		double roomCharges = 5000;
-		double additionalCharges = 2000;
-		String transactionId = "TXN987654321";
+		String customerName = invoice.getCustomerName();
+		String mobile = invoice.getMobile();
+		String email = invoice.getEmail();
+		String address = invoice.getAddress();
+		Date checkInDate = invoice.getCheckInDate();
+		Date checkOutDate = invoice.getCheckOutDate();
+		String roomType = invoice.getRoomType();
+		int roomId = invoice.getRoomId();
+		double roomCharges = invoice.getRoomCharges();
+		double additionalCharges = invoice.getAdditionalCharges();
+		Utility txUtil = new Utility();
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat timestampFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		String currentTimestamp = timestampFormat.format(new Date());
+
+		String transactionId = txUtil.generateTransactionID(customerId, reservationId, customerName, mobile, email,
+				address, checkInDate, checkOutDate, roomType, roomId, roomCharges, additionalCharges);
+		if (transactionId != null) {
+			boolean status = bd.updatePaymentStatus(reservationId, roomId);
+			if (!status) {
+				return null;
+			}
+		} else {
+			return null;
+		}
+
+		invoice.setTransactionId(transactionId);
+
 		Path filePath = null;
 		PDPageContentStream contentStream;
 		String fileName;
@@ -62,6 +92,12 @@ public class InvoiceService {
 			contentStream.moveTo(100, 710);
 			contentStream.lineTo(500, 710);
 			contentStream.stroke();
+
+			contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
+			contentStream.beginText();
+			contentStream.newLineAtOffset(100, 700);
+			contentStream.showText("Generated on: " + currentTimestamp); // Add timestamp here
+			contentStream.endText();
 
 			// Section: Customer Information
 			contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
@@ -96,7 +132,7 @@ public class InvoiceService {
 			contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
 			contentStream.beginText();
 			contentStream.newLineAtOffset(100, 540);
-			contentStream.showText("Booking ID: " + bookingId);
+			contentStream.showText("Booking ID: " + reservationId);
 			contentStream.newLineAtOffset(0, -20);
 			contentStream.showText("Check-in Date: " + dateFormat.format(checkInDate));
 			contentStream.newLineAtOffset(0, -20);
@@ -118,11 +154,11 @@ public class InvoiceService {
 			contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
 			contentStream.beginText();
 			contentStream.newLineAtOffset(100, 420);
-			contentStream.showText("Room Charges: ₹" + roomCharges);
+			contentStream.showText("Room Charges: " + roomCharges + " INR");
 			contentStream.newLineAtOffset(0, -20);
-			contentStream.showText("Additional Service Charges: ₹" + additionalCharges);
+			contentStream.showText("Additional Service Charges: " + additionalCharges);
 			contentStream.newLineAtOffset(0, -20);
-			contentStream.showText("Total: ₹" + (roomCharges + additionalCharges));
+			contentStream.showText("Total: " + (roomCharges + additionalCharges) + " INR");
 			contentStream.endText();
 
 			// Section: Payment Information
@@ -156,14 +192,14 @@ public class InvoiceService {
 			contentStream.endText();
 			fileName = "invoice_" + customerId + "_" + reservationId + ".pdf";
 			filePath = Paths.get(outputDirectory, fileName);
+			contentStream.close();
 			document.save(filePath.toFile());
 			document.close();
-			contentStream.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
-		if(filePath!=null) {
+		}
+		if (filePath != null) {
 			return filePath.toString();
 		}
 
