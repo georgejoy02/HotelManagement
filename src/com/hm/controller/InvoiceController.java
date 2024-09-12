@@ -7,12 +7,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import com.hm.service.AdminService;
 import com.hm.service.InvoiceService;
 import com.hm.util.Utility;
@@ -24,6 +22,7 @@ public class InvoiceController extends HttpServlet {
 		super();
 
 	}
+
 	RequestDispatcher rd;
 
 	ServletContext context;
@@ -72,8 +71,8 @@ public class InvoiceController extends HttpServlet {
 
 				filePath = invoiceServ.fetchInvoiceService(customerId, reservationId);
 				if (filePath == null) {
-					filePath = invoiceServ.generateInvoice(reservationId, customerId);//payment updated here
-				}else {
+					filePath = invoiceServ.generateInvoice(reservationId, customerId);// payment updated here
+				} else {
 					System.out.println("file already generated");
 				}
 
@@ -88,10 +87,6 @@ public class InvoiceController extends HttpServlet {
 							Files.copy(file, out);
 							out.flush();
 						}
-						request.setAttribute("reservations", null);
-					
-					rd = request.getRequestDispatcher("admin/adminBilling.jsp");
-					rd.forward(request, response);
 					} else {
 						System.out.println("file not found");
 					}
@@ -111,7 +106,7 @@ public class InvoiceController extends HttpServlet {
 			customerId = request.getParameter("customerId");
 			reservationId = Integer.parseInt(request.getParameter("reservationId"));
 			try {
-				 filePath = invoiceServ.fetchInvoiceService(customerId, reservationId);
+				filePath = invoiceServ.fetchInvoiceService(customerId, reservationId);
 				if (filePath != null) {
 
 					Path file = Path.of(filePath);
