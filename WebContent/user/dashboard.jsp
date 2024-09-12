@@ -65,13 +65,13 @@ if (session == null || session.getAttribute("user") == null) {
 
 
 
-	<div class="dashboard-content">
+	<div class="dashboard-content" style="height:50px">
 		<div class="welcome-message">
 			<h2>
 				Welcome, <span><%=customerId%></span>!
 			</h2>
 		</div>
-		<h3>Recent Activities</h3>
+		<!-- <h3>Recent Activities</h3>
 		<ul id="recent-activities">
 
 		</ul>
@@ -84,7 +84,9 @@ if (session == null || session.getAttribute("user") == null) {
 		<h3>Notifications</h3>
 		<ul id="notifications">
 
-		</ul>
+		</ul> -->
+		
+		<p ></p>
 	</div>
 
 

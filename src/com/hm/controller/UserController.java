@@ -43,15 +43,15 @@ public class UserController extends HttpServlet {
 		String action = request.getParameter("action");
 
 		switch (action) {
-		case "logoutUser":
+		case "logoutAdmin":
 			HttpSession session = request.getSession(false);
 			if (session != null) {
 				session.invalidate();
 			}
-			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-			response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-			response.setDateHeader("Expires", 0); // Proxies
-			response.sendRedirect("index.jsp");
+//			response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+//			response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+//			response.setDateHeader("Expires", 0); // Proxies
+			response.sendRedirect("user/login.jsp");
 			break;
 
 		default:
@@ -61,7 +61,7 @@ public class UserController extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("doPostTest");
+		System.out.println("doPostTestAdmin");
 		// TODO Auto-generated method stub
 		String action = request.getParameter("action");
 		switch (action) {
@@ -110,7 +110,7 @@ public class UserController extends HttpServlet {
 			break;
 
 		case "reservationUser":
-			Utility convDate=new Utility();
+			Utility convDate = new Utility();
 
 			Date checkInDate = convDate.convertStringToSQLDate(request.getParameter("checkinDate"));
 			Date checkOutDate = convDate.convertStringToSQLDate(request.getParameter("checkoutDate"));
@@ -130,7 +130,8 @@ public class UserController extends HttpServlet {
 						"<font color=\"green\">Booking ID: " + reservation.getBookingId() + "</font>");
 				request.setAttribute("status", "<font color=\"green\">Reservation  successful.</font>");
 			} else {
-				request.setAttribute("status", "<font color=\"red\">Reservation not successful!!.</font>");
+				request.setAttribute("status", "<font color=\"red\">Currently <strong>" + roomType
+						+ "</strong> room type is  not available for reservaton<br>Please try another room type!!.</font>");
 			}
 
 			rd = request.getRequestDispatcher("user/reservation.jsp");

@@ -11,6 +11,7 @@ public class Reservation {
 	private String name;
 	private long contact;
 	private int roomId;
+	
 
 	public int getRoomId() {
 		return roomId;

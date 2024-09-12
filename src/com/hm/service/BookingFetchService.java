@@ -23,4 +23,10 @@ public class BookingFetchService {
 		return rd.getBookings(customerId, ">=");
 
 	}
+	
+	public List<BookingDetails> getBookings(String customerId) {
+
+		return rd.getBookings(customerId, null);
+
+	}
 }

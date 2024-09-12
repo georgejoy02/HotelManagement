@@ -23,11 +23,16 @@
 			method="post">
 			<div class="form-group">
 				<label for="customerName">Customer Name:</label> <input type="text"
-					id="customerName" name="customerName" maxlength="50" required>
+					id="customerName" name="customerName" maxlength="50"
+					pattern="(\S(.*\S)?)" required> <small
+					id="customerNameHelp" style="display: none; color: red;">invalid
+					name</small>
 			</div>
 			<div class="form-group">
 				<label for="email">Email:</label> <input type="email" id="email"
-					name="email" required>
+					name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+					required> <small id="emailHelp"
+					style="display: none; color: red;">email not valid</small>
 			</div>
 			<div class="form-group">
 				<label for="mobile">Mobile Number:</label>
@@ -46,15 +51,17 @@
 			<h2>Username and Password</h2>
 			<div class="form-group">
 				<label for="customerId">Customer ID:</label> <input type="text"
-					id="customerId" name="customerId" maxlength="20" required>
+					id="customerId" name="customerId" maxlength="20" pattern="(^\S+$)"
+					required> <small id="customerIdHelp"
+					style="display: none; color: red;">no space in customer id</small>
 			</div>
 			<div class="form-group">
 				<label for="password">Password:</label> <input type="password"
 					id="password" name="password" maxlength="30"
 					pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}" required> <small
-					id="passwordHelp" style="display: none;">Password must be
-					at least 8 characters long, include one uppercase letter, one
-					lowercase letter, and one special character.</small>
+					id="passwordHelp" style="display: none; color: red;">Password
+					must be at least 8 characters long, include one uppercase letter,
+					one lowercase letter, and one special character.</small>
 
 			</div>
 			<div class="form-group">
@@ -62,7 +69,7 @@
 					type="password" id="confirmPassword" name="confirmPassword"
 					minlength="5" maxlength="30"
 					pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}" required> <small
-					id="confirmPasswordHelp" style="display: none;">Passwords
+					id="confirmPasswordHelp" style="display: none; color: red;">Passwords
 					do not match.</small>
 			</div>
 

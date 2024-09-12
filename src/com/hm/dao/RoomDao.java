@@ -9,11 +9,12 @@ import java.sql.SQLException;
 
 public class RoomDao {
 
+	DbUtility db = new DbUtility();
+	PreparedStatement ps = null;
+	Connection con = db.connectDatabase();
+
 	public int findAvailableRoomId(String roomType) {
 
-		DbUtility db = new DbUtility();
-		PreparedStatement ps = null;
-		Connection con = db.connectDatabase();
 		try {
 			String query = "SELECT roomId FROM room WHERE roomType = ? AND status = 'Available'";
 			ps = con.prepareStatement(query);
@@ -54,7 +55,7 @@ public class RoomDao {
 				room.setStatus(rs.getString("status"));
 				room.setFloor(rs.getString("floor"));
 				room.setPrice(rs.getDouble("price"));
-				System.out.println("rmdao "+room.getPrice());
+				System.out.println("rmdao " + room.getPrice());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -66,5 +67,45 @@ public class RoomDao {
 
 		}
 		return room;
+	}
+
+	public int addrooms(Room room) {
+		int roomId = -1;
+		DbUtility db = new DbUtility();
+		PreparedStatement ps = null;
+		Connection con = db.connectDatabase();
+
+		String sql = "INSERT INTO Room (roomNumber, floor, roomType, price) VALUES (?, ?, ?, ?)";
+
+		try {
+
+			ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+			ps.setString(1, room.getRoomNumber());
+			ps.setInt(2, Integer.parseInt(room.getFloor()));
+			ps.setString(3, room.getRoomType());
+			ps.setDouble(4, room.getPrice());
+
+			ps.executeUpdate();
+
+			con.commit();
+			ResultSet generatedKeys = ps.getGeneratedKeys();
+			if (generatedKeys != null && generatedKeys.next()) {
+				roomId = generatedKeys.getInt(1);
+				System.out.println("Generated room id: " + roomId);
+				room.setRoomId(roomId);
+			} else {
+				System.out.println("room id NOT GENERATED");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			db.closeStatement(ps);
+			db.closeConnection(con);
+
+		}
+
+		return roomId;
+
 	}
 }

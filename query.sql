@@ -5,18 +5,19 @@ CREATE TABLE CUSTOMER (
     MobileNumber VARCHAR(15) NOT NULL, 
     Address VARCHAR(255) NOT NULL,
     PasswordHash VARCHAR(255) NOT NULL,
-    AccountStatus  VARCHAR(20) NOT NULL CHECK (AccountStatus IN ('active', 'inactive'),
+    AccountStatus  VARCHAR(20) NOT NULL CHECK (AccountStatus IN ('active', 'inactive')),
+    RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Admin (
+    AdminID VARCHAR(20) PRIMARY KEY,
+    PasswordHash VARCHAR(255) NOT NULL,
+    AccountStatus  VARCHAR(20) NOT NULL CHECK (AccountStatus IN ('active', 'inactive')),
     RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
-INSERT INTO CUSTOMER 
-(CustomerID, CustomerName, Email, MobileNumber, Address, PasswordHash, AccountStatus) 
-VALUES 
-('cust001', 'John Doe', 'john.doe1@example.com', '+1234567890', '123 Main St, City', 'hashed_password', 'active');
 
-
--- Create Room Table
 CREATE TABLE Room (
     roomId INT GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,
     roomNumber VARCHAR(10) NOT NULL UNIQUE,
@@ -28,16 +29,8 @@ CREATE TABLE Room (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO Room 
-(roomNumber, floor, roomType, price, status) 
-VALUES 
-('1121147', 1, 'Single', 1500.00, 'Available'),
-('1124118', 1, 'Double', 2000.00, 'Available'),
-('2224219', 2, 'Suite', 3500.00, 'Available');
 
 
-
--- Create Bookings Table
 CREATE TABLE Reservation (
     reservationId INT GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,
     customerId VARCHAR(20),
@@ -54,11 +47,6 @@ CREATE TABLE Reservation (
     FOREIGN KEY (roomId) REFERENCES Room(RoomID)
 );
 
-INSERT INTO Reservation 
-(customerId, checkInDate, checkOutDate, roomId, roomType, name, contactNumber, status) 
-VALUES 
-('customer123', '2024-09-15', '2024-09-20', 1, 'single', 'John Doe', '+1234567890', 'confirmed');
-
 
 
 CREATE TABLE Invoices (
@@ -69,7 +57,7 @@ CREATE TABLE Invoices (
      FOREIGN KEY (customerId) REFERENCES Customer(customerId),
       FOREIGN KEY (reservationId) REFERENCES Reservation(reservationId)
 );
-
+      
 
 
 ----------------------------------------------------------------------------------
@@ -117,11 +105,8 @@ select * from Reservation;
 select * from CUSTOMER;
 select * from ROOM;
 select * from  INVOICES;
+select * from  admin;
 
 
-
-
-
-
-
-
+--INSERT INTO Admin (AdminID, PasswordHash, AccountStatus)
+--VALUES ('admin123', '1000:5b42403230393634343264:590f1ebe12e6244e895afd8176353c0be3aeb96d2f3502ce46879fe9079438515626d4260ed4984b8124169893b5212f7754a909def508e320e5e675400c540a', 'active');

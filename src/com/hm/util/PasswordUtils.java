@@ -8,22 +8,46 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-//https://github.com/lokeshgupta1981/Core-Java/blob/master/src/main/java/com/howtodoinjava/hashing/password/demo/advanced/ReallyStrongSecuredPassword.java
-
 public class PasswordUtils {
 
-	public boolean validatePassword(String originalPassword, String storedPassword)
-			throws NoSuchAlgorithmException, InvalidKeySpecException {
+//	public static void main(String[] args) {
+//		PasswordUtils testObj=new PasswordUtils();
+//		
+//		try {
+//			System.out.println(testObj.generatePasswordHash("PassAdm@123"));
+//		} catch (NoSuchAlgorithmException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (InvalidKeySpecException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		//1000:5b42403230393634343264:590f1ebe12e6244e895afd8176353c0be3aeb96d2f3502ce46879fe9079438515626d4260ed4984b8124169893b5212f7754a909def508e320e5e675400c540a
+//	}
+
+	public boolean validatePassword(String originalPassword, String storedPassword) {
 		String[] parts = storedPassword.split(":");
 		int iterations = Integer.parseInt(parts[0]);
-		byte[] salt = fromHex(parts[1]);
-		byte[] hash = fromHex(parts[2]);
+		byte[] salt;
+		byte[] hash = null;
+		byte[] testHash = null;
 
-		PBEKeySpec spec = new PBEKeySpec(originalPassword.toCharArray(), salt, iterations, hash.length * 8);
+		try {
+			salt = fromHex(parts[1]);
+			hash = fromHex(parts[2]);
 
-		SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			PBEKeySpec spec = new PBEKeySpec(originalPassword.toCharArray(), salt, iterations, hash.length * 8);
 
-		byte[] testHash = skf.generateSecret(spec).getEncoded();
+			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+
+			testHash = skf.generateSecret(spec).getEncoded();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		int diff = hash.length ^ testHash.length;
 
@@ -34,14 +58,24 @@ public class PasswordUtils {
 		return diff == 0;
 	}
 
-	public String generatePasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+	public String generatePasswordHash(String password) {
 		int iterations = 1000;
 		char[] chars = password.toCharArray();
-		byte[] salt = getSalt().getBytes();
+		byte[] salt = null;
+		byte[] hash = null;
+		try {
+			salt = getSalt().getBytes();
+			PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 64 * 8);
+			SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			hash = skf.generateSecret(spec).getEncoded();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 64 * 8);
-		SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-		byte[] hash = skf.generateSecret(spec).getEncoded();
 		return iterations + ":" + toHex(salt) + ":" + toHex(hash);
 
 	}
@@ -53,7 +87,8 @@ public class PasswordUtils {
 		return salt.toString();
 	}
 
-	private String toHex(byte[] array) throws NoSuchAlgorithmException {
+	private String toHex(byte[] array) {
+
 		BigInteger bi = new BigInteger(1, array);
 		String hex = bi.toString(16);
 		int paddingLength = (array.length * 2) - hex.length();

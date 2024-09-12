@@ -19,7 +19,7 @@ if (session == null || session.getAttribute("user") == null) {
 <title>"Customer"</title>
 </head>
 <body>
-<script src="<%=request.getContextPath()%>/static/js/user/navbar.js"></script>
+<script src="<%=request.getContextPath()%>/static/js/navbar.js"></script>
 	<div class="top-bar">
 		<button
 			onclick="navigate('<%=request.getContextPath()%>/user/dashboard.jsp')">Home</button>

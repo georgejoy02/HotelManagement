@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customer Login</title>
+<title>Admin Login</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/static/css/style.css">
 
@@ -47,7 +47,8 @@ label {
 input[type="text"], input[type="password"] {
 	width: 95%;
 	padding: 10px;
-	padding-right: 10px; margin-bottom : 15px;
+	padding-right: 10px;
+	margin-bottom: 15px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	font-size: 16px;
@@ -89,14 +90,14 @@ div {
 
 <body>
 	<div id="login-formdiv">
-		<h2>Login</h2>
+		<h2>Admin Login</h2>
 		<%=request.getAttribute("errorMessage") != null ? request.getAttribute("errorMessage") : ""%>
 		<form id="login-form"
-			action="<%=request.getContextPath()%>/UserController?action=loginUser"
+			action="<%=request.getContextPath()%>/AdminController?action=loginAdmin"
 			method="post">
 			<div>
-				<label for="login-user-id">User ID:</label> <input type="text"
-					id="login-user-id" name="customerId" minlength="5" maxlength="20"
+				<label for="login-user-id">Admin ID:</label> <input type="text"
+					id="login-user-id" name="adminId" minlength="5" maxlength="20"
 					required>
 			</div>
 			<div>
@@ -108,7 +109,7 @@ div {
 
 		</form>
 		<div id="login-error" style="display: none; color: red;">Invalid
-			User ID or Password</div>
+			Admin ID or Password</div>
 	</div>
 </body>
 

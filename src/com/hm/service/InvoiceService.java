@@ -28,11 +28,11 @@ public class InvoiceService {
 		BillingDAO bd = new BillingDAO();
 		invoicePath=bd.fetchInvoice(customerId, reservationId);
 		return invoicePath;
-		
-		
 	}
 
 	public String generateInvoice(int reservationId, String customerId) {
+		
+		
 		Utility crDir = new Utility();
 		String outputDirectory = crDir.createOutputDirectory(servletContext.getRealPath("/invoices"));
 		BillingDAO bd = new BillingDAO();

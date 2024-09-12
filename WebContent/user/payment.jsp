@@ -21,6 +21,12 @@ String customerId = (String) request.getAttribute("customerId");
 <head>
 <title>Payment Page</title>
 <script>
+	function confirmSub() {
+		// Display a confirmation dialog
+		var userConfirmed = confirm("Generate Invoice?");
+
+		return userConfirmed;
+	}
 	function validateCardNumber() {
 		const cardNumber = document.getElementById("cardNumber").value;
 		const cardNumberError = document.getElementById("cardNumberError");
@@ -37,8 +43,8 @@ String customerId = (String) request.getAttribute("customerId");
 		const cardHolderNameError = document
 				.getElementById("cardHolderNameError");
 
-		if (cardHolderName.length < 10) {
-			cardHolderNameError.textContent = "Card Holder Name must be at least 10 characters.";
+		if (cardHolderName.length < 10 || !cardHolderName.trim()) {
+			cardHolderNameError.textContent = "Card Holder Name must be at least 10 characters  and valid.";
 		} else {
 			cardHolderNameError.textContent = "";
 		}
@@ -147,7 +153,9 @@ button:hover {
 <body>
 	<h2>Payment Page</h2>
 
-	<form action="<%=request.getContextPath()%>/InvoiceController?action=generateInvoice" method="post">
+	<form
+		action="<%=request.getContextPath()%>/InvoiceController?action=generateInvoice"
+		method="post" onsubmit="return confirmSub();">
 		<label for="customerID">Customer ID:</label> <input type="text"
 			id="customerID" name="customerId" value="<%=customerId%>" readonly><br>
 		<label for="reservationId">Reservation ID:</label> <input type="text"

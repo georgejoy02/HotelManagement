@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.hm.util.DbUtility;
+import com.hm.util.PasswordUtils;
 
 public class UserDAO {
 	public int addUser(User user) {
@@ -44,21 +45,31 @@ public class UserDAO {
 	}
 
 	public boolean validateUser(String username, String password) {
+		PasswordUtils psv = new PasswordUtils();
 		DbUtility db = new DbUtility();
 		PreparedStatement ps = null;
 		Connection con = db.connectDatabase();
-		String query = "SELECT * FROM CUSTOMER WHERE CustomerID = ? AND PasswordHash = ?";
+		String query = "SELECT PasswordHash FROM CUSTOMER WHERE CustomerID = ?";
 		try {
 			ps = con.prepareStatement(query);
 			ps.setString(1, username);
-			ps.setString(2, password);
 
-			try (ResultSet resultSet = ps.executeQuery()) {
-				return resultSet.next(); // Returns true if a user is found
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					String PasswordHash = rs.getString("PasswordHash");
+					return psv.validatePassword(password, PasswordHash);
+				} else {
+					System.out.println("customer not found.");
+				}
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace(); // Handle the exception
+		} finally {
+
+			db.closeStatement(ps);
+			db.closeConnection(con);
+
 		}
 		return false;
 	}

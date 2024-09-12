@@ -77,19 +77,27 @@ public class ReservationDAO {
 
 	public List<BookingDetails> getBookings(String customerId, String operator) {
 		List<BookingDetails> prvsBkngs = new ArrayList<BookingDetails>();
-		String sql = "select reservationId,checkInDate,checkOutDate,roomid,updated_at from reservation where customerid=? AND checkoutDate "
-				+ operator + " ?";
+		String sql = "SELECT reservationId,status, checkInDate, checkOutDate, roomId, updated_at FROM reservation WHERE customerId = ?";
+
+		if (operator != null && !operator.isEmpty()) {
+			sql += " AND checkOutDate " + operator + " ?";
+		}
 		Date today = new Date(System.currentTimeMillis());
 
 		try {
 			ps = con.prepareStatement(sql);
 			ps.setString(1, customerId);
-			ps.setDate(2, today);
+
+			if (operator != null && !operator.isEmpty()) {
+				ps.setDate(2, today); // Only set this if there's an operator
+			}
 
 			try (ResultSet resultSet = ps.executeQuery()) {
 				while (resultSet.next()) {
 					BookingDetails bd = new BookingDetails();
+					bd.setCustomerId(customerId);
 					bd.setBookingId(resultSet.getString("reservationId"));
+					bd.setStatus(resultSet.getString("status"));
 					bd.setCheckInDate(resultSet.getDate("checkInDate"));
 					bd.setCheckOutDate(resultSet.getDate("checkOutDate"));
 					bd.setBookingDate(resultSet.getTimestamp("updated_at"));

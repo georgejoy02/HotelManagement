@@ -4,12 +4,14 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 public class BookingDetails {
+	private String customerId;
 	private String bookingId;
 	private Date checkInDate;
 	private Date checkOutDate;
 	private String roomNumber;
 	private double totalAmount;
 	private  Timestamp  bookingDate;
+	private String  status;
 	
 	public String getBookingId() {
 		return bookingId;
@@ -46,6 +48,18 @@ public class BookingDetails {
 	}
 	public void setBookingDate(Timestamp bookingDate) {
 		this.bookingDate = bookingDate;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
 	
 	

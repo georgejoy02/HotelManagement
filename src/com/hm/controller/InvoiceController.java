@@ -1,14 +1,19 @@
 package com.hm.controller;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.hm.service.AdminService;
 import com.hm.service.InvoiceService;
 import com.hm.util.Utility;
 
@@ -19,6 +24,7 @@ public class InvoiceController extends HttpServlet {
 		super();
 
 	}
+	RequestDispatcher rd;
 
 	ServletContext context;
 
@@ -40,7 +46,6 @@ public class InvoiceController extends HttpServlet {
 		case "generateInvoice":
 			String customerId = request.getParameter("customerId");
 			int reservationId = Integer.parseInt(request.getParameter("reservationId"));
-			String billAmount = request.getParameter("billAmount");
 
 			String paymentMode = request.getParameter("paymentMode");
 			String cardNumber = request.getParameter("cardNumber");
@@ -49,14 +54,29 @@ public class InvoiceController extends HttpServlet {
 			String cvv = request.getParameter("cvv");
 			Utility utility = new Utility();
 
+			HttpSession session = request.getSession(false);
+			String username = (String) session.getAttribute("user");
+			AdminService as = new AdminService();
+
+			boolean isAdmin = as.validateAdminServ(username);
 			boolean isValid = utility.carddetailsVerify(paymentMode, cardNumber, cardHolderName, expiryDate, cvv);
-			if (!isValid) {
+			if (isAdmin) {
+				System.out.println("admin verified");
+			} else if (!isValid) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "card details not correct!!.");
 				return;
 			}
+			String filePath = null;
 
 			try {
-				String filePath = invoiceServ.generateInvoice(reservationId, customerId);
+
+				filePath = invoiceServ.fetchInvoiceService(customerId, reservationId);
+				if (filePath == null) {
+					filePath = invoiceServ.generateInvoice(reservationId, customerId);//payment updated here
+				}else {
+					System.out.println("file already generated");
+				}
+
 				if (filePath != null) {
 
 					Path file = Path.of(filePath);
@@ -68,6 +88,10 @@ public class InvoiceController extends HttpServlet {
 							Files.copy(file, out);
 							out.flush();
 						}
+						request.setAttribute("reservations", null);
+					
+					rd = request.getRequestDispatcher("admin/adminBilling.jsp");
+					rd.forward(request, response);
 					} else {
 						System.out.println("file not found");
 					}
@@ -83,10 +107,11 @@ public class InvoiceController extends HttpServlet {
 
 			break;
 		case "fetchInvoice":
+			filePath = null;
 			customerId = request.getParameter("customerId");
 			reservationId = Integer.parseInt(request.getParameter("reservationId"));
 			try {
-				String filePath = invoiceServ.fetchInvoiceService( customerId,reservationId);
+				 filePath = invoiceServ.fetchInvoiceService(customerId, reservationId);
 				if (filePath != null) {
 
 					Path file = Path.of(filePath);
